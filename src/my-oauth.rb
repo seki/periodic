@@ -11,7 +11,7 @@ module Periodic
     end
 
     def credential_via_env
-      return ENV['PGTIPS_CONSUMER_KEY'], ENV['PGTIPS_CONSUMER_SECRET']
+      return ENV['TW_CONSUMER_KEY'], ENV['TW_CONSUMER_SECRET']
     end
 
     def consumer
