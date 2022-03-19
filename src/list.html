@@ -1,0 +1,22 @@
+<div class="container fs-3">
+  <div class="row">
+    <table class="table">
+      <tbody id="sort-table">
+      <% list(context).each_with_index do |w, i| %>
+      <tr data-id="r<%= i %>">
+        <td>
+          <%=h w %>
+        </td>
+
+        <td>
+          <div class="col-1 form-check form-switch handle">
+            <input class="form-check-input" type="checkbox" id="list-tr-<%= i %>">
+          </div>
+        </td>
+      </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+  </div>
+</div>
