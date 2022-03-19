@@ -56,7 +56,7 @@ module Periodic
     end
 
     def oauth_start(context)
-      url = context.req.request_uri + '/auth/twitter/callback'
+      url = ENV['TW_CALLBACK'] || context.req.request_uri + '/auth/twitter/callback'
       pp [:do_login, session_id, url]
       consumer = Periodic::Twitter::consumer
       request_token = consumer.get_request_token(:oauth_callback => url.to_s)
