@@ -82,7 +82,7 @@ module Periodic
   end
 
   class Tags
-    Default = %w(bi-sun bi-moon-stars bi-nintendo-switch bi-door-open bi-piggy-bank bi-incognito).map {
+    Default = %w(bi-sun bi-moon-stars bi-nintendo-switch bi-door-open bi-piggy-bank bi-chat-text).map {
       |x| %Q+<i class="bi #{x}"></i>+
     }
     def to_a

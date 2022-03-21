@@ -1,25 +1,25 @@
 <div class="container">
-  <div class="row">
     <div class="list-group list-group-flush" id="sort-table">
       <% list(context).each_with_index do |w, i| %>
-      <div class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between mb-2">
+      <div class="container list-group-item list-group-item-action" data-id="R<%= i %>">
+
+        <div class="input-group mb-2">
           <input id="text-<%= i %>" class="periodic-text form-control" placeholder="Not entered" type="text" value="<%=h w %>" onchange="update_text(this)">
-          <span class="handle ms-3"><small><i class="bi bi-arrow-down-up"></i></small></span>
         </div>
 
-        <div class="mb-1">
+        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
           <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
             <% @session.tags.to_a.each_with_index do |icon, n| %>
             <input type="checkbox" class="btn-check" id="btncheck<%= n %>-<%= i %>" autocomplete="off">
-            <label class="btn btn-outline-danger" for="btncheck<%= n %>-<%= i %>"><%= icon %></label>
+            <label class="btn btn-sm btn-outline-danger" for="btncheck<%= n %>-<%= i %>"><%= icon %></label>
             <% end %>
           </div>
+          <div class="input-group">
+            <button type="button" class="handle btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-down-up"></i></button>
+          </div>
         </div>
-        <small>write later</small>
-
+        
       </div>
       <% end %>
     </div>
-  </div>
 </div>

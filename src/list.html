@@ -1,4 +1,12 @@
-<div class="container fs-5">
+<div class="container">
+  <div class="m-1 row">
+      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+        <% @session.tags.to_a.each_with_index do |icon, n| %>
+        <input type="radio" class="btn-check" name="tabs" id="btncheck<%= n %>" autocomplete="off">
+        <label class="btn btn-outline-danger" for="btncheck<%= n %>"><%= icon %></label>
+        <% end %>
+      </div>
+  </div>
   <div class="row">
     <table class="table">
       <tbody id="sort-table">
@@ -19,5 +27,4 @@
     </table>
 
   </div>
-
 </div>
