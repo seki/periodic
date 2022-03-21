@@ -6,7 +6,7 @@ module Periodic
 
     module_function
     def credential_via_file
-      csv = CSV.read(File.expand_path('pgtips-tw-credential.csv'), headers: true)
+      csv = CSV.read(File.expand_path('periodical-tw-credential.csv'), headers: true)
       return csv[0][0], csv[0][1]
     end
 

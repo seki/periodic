@@ -32,8 +32,10 @@ module Periodic
 
       @base = BaseTofu.new(self)
       @oauth = OAuthTofu.new(self)
+
+      @tags = Tags.new
     end
-    attr_reader :oauth, :tw_screen_name, :tw_user_id
+    attr_reader :oauth, :tw_screen_name, :tw_user_id, :tags
     
     def do_GET(context)
       context.res_header('cache-control', 'no-store')
@@ -74,6 +76,17 @@ module Periodic
       @tw_screen_name = access_token.params[:screen_name]
       @tw_secret = access_token.secret
       @tw_token = access_token.token
+    rescue
+      pp $!
+    end
+  end
+
+  class Tags
+    Default = %w(bi-sun bi-moon-stars bi-nintendo-switch bi-door-open bi-piggy-bank bi-incognito).map {
+      |x| %Q+<i class="bi #{x}"></i>+
+    }
+    def to_a
+      Default
     end
   end
 
@@ -86,7 +99,7 @@ module Periodic
     end
 
     def tofu_id
-      'api'
+      'oauth'
     end
   end
 
@@ -96,6 +109,7 @@ module Periodic
     def initialize(session)
       super(session)
       @list = ListTofu.new(session)
+      @edit = EditTofu.new(session)
     end
 
     def tofu_id
@@ -119,6 +133,14 @@ module Periodic
 
   class ListTofu < Tofu::Tofu
     set_erb(__dir__ + '/list.html')
+
+    def list(context)
+      %w(カフェオレハーフを買っていく フィットボクシング 金のなる木を植える カフェでコーヒー)
+    end
+  end
+
+  class EditTofu < Tofu::Tofu
+    set_erb(__dir__ + '/edit.html')
 
     def list(context)
       %w(カフェオレハーフを買っていく フィットボクシング 金のなる木を植える カフェでコーヒー)

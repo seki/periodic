@@ -13,7 +13,7 @@ server.mount('/', Tofu::Tofulet, tofu)
 
 unless ENV['DYNO']
   server.mount_proc('/auth/twitter/callback') do |req, res|
-    _, secret, session_id = Periodic::WaitingOAuth.take([req.query['oauth_token'], nil, nil], 0)
+    _, secret, session_id = Periodic::WaitingOAuth.take([req.query['oauth_token'], nil, nil], 0) rescue nil
     pp [:mount_proc, session_id]
 
     if session = tofu.instance_variable_get('@bar').fetch(session_id) rescue nil
