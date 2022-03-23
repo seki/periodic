@@ -33,7 +33,7 @@
             <a class="nav-link" <%=href('login', {}, context)%>>Twitterでログイン</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/edit/">編集</a>
+            <a class="nav-link" href="/app/edit/">編集</a>
           </li>
         </ul>
       </div>
@@ -56,10 +56,50 @@
 const sortElement = document.getElementById('sort-table');
 var sortable = Sortable.create(sortElement, {
   handle: '.handle',
+  filter: '.sort-ignore',
   onChange: function(/**Event*/evt) {
 		console.log(this.toArray());
+    fetch('/app/api/', {
+      method: 'POST', // or 'PUT'
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(this.toArray()),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
 	}
 });
+
+function add_text(e) {
+  console.log(e.value);
+  data = {
+    op: 'add',
+    title: e.value
+  }
+
+  fetch('/app/api/', {
+    method: 'POST', // or 'PUT'
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Success:', data);
+    window.location.href = "/app/edit/#text-add";
+    window.location.reload(true);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+}
 </script>
 </body>
 </html>

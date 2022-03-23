@@ -1,25 +1,40 @@
 <div class="container">
-    <div class="list-group list-group-flush" id="sort-table">
-      <% list(context).each_with_index do |w, i| %>
-      <div class="container list-group-item list-group-item-action" data-id="R<%= i %>">
 
-        <div class="input-group mb-2">
-          <input id="text-<%= i %>" class="periodic-text form-control" placeholder="Not entered" type="text" value="<%=h w %>" onchange="update_text(this)">
-        </div>
 
-        <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
-          <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
-            <% @session.tags.to_a.each_with_index do |icon, n| %>
-            <input type="checkbox" class="btn-check" id="btncheck<%= n %>-<%= i %>" autocomplete="off">
-            <label class="btn btn-sm btn-outline-danger" for="btncheck<%= n %>-<%= i %>"><%= icon %></label>
-            <% end %>
-          </div>
-          <div class="input-group">
-            <button type="button" class="handle btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-down-up"></i></button>
-          </div>
-        </div>
-        
+  <div class="list-group list-group-flush" id="sort-table">
+    <% list(context).each do |it| %>
+    <div class="container list-group-item list-group-item-action" data-id="<%= it.id_str %>">
+
+      <div class="input-group mb-2">
+        <input id="text-<%= it.id_str %>" class="periodic-text form-control" placeholder="will remove" type="text" value="<%=h it.title %>" onchange="update_text(this)">
       </div>
-      <% end %>
+
+      <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+          <% @session.tags.to_a.each_with_index do |icon, n| %>
+          <input type="checkbox" class="btn-check" id="btncheck<%= n %>-<%= it.id_str %>" autocomplete="off">
+          <label class="btn btn-sm btn-outline-danger" for="btncheck<%= n %>-<%= it.id_str %>"><%= icon %></label>
+          <% end %>
+        </div>
+        <div class="input-group">
+          <button type="button" class="handle btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-down-up"></i></button>
+        </div>
+      </div>
+      
     </div>
+    <% end %>
+  </div>
+
+  <div class="list-group list-group-flush">
+    <div class="container list-group-item list-group-item-action sort-ignore">
+      <div class="input-group mb-2">
+        <input id="text-add" class="periodic-text form-control" placeholder="create a TODO" type="text" value="" onchange="add_text(this)">
+      </div>
+      <div class="btn-toolbar justify-content-end" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="input-group">
+          <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-plus-lg"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
