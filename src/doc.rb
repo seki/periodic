@@ -1,10 +1,7 @@
 require 'json'
-require_relative 'bucket'
 require 'monitor'
 
 module Periodic
-  Store = Bucket.new
-  Name = "periodic.json"
 
   class Doc
     include MonitorMixin
