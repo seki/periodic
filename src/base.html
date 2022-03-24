@@ -187,13 +187,10 @@ function check_tags(e) {
 
 function set_tag(e) {
   const tag = e.parentElement.querySelector(".periodic-tag:checked").dataset.tag;
-  console.log(tag);
-  data = {
-    op: 'tag',
-    tags: tag
+  if (tag) {
+    Array.from(document.querySelectorAll(".periodic-item:not(.periodic-tag-" + tag + ")")).map(x=>x.classList.add('d-none'));
+    Array.from(document.querySelectorAll(".periodic-item.periodic-tag-" + tag)).map(x=>x.classList.remove('d-none'));
   }
-  console.log(e);
-  // window.location.href = "/app/" + tag;
 }
 
 </script>

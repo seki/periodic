@@ -9,7 +9,7 @@
       </div>
   </div>
   <div class="row">
-    <div class="list-group list-group-flush">
+    <div class="list-group list-group-flush" id="stock">
       <% list(context).each do |it, checked| %>
       <div class="d-flex w-100 justify-content-between list-group-item list-group-item-action <%= it.tag_classlist%> periodic-item" data-id="<%= it.id_str %>">
         <div>
@@ -21,7 +21,5 @@
       </div>
       <% end %>
     </div>
-
-
   </div>
 </div>
