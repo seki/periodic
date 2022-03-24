@@ -18,7 +18,7 @@ module Periodic
 
     DOC = {}
     def self.load(user_id)
-      unless DOC['user_id']
+      unless DOC[user_id]
         pp :doc_load
         it = self.new
         it.add_item("金のなる木を植える")
@@ -26,9 +26,9 @@ module Periodic
         it.add_item("海岸でレシピ")
         it.add_item("金のなる木を植える")
         it.add_item("金のなる木を植える")
-        DOC['user_id'] = it
+        DOC[user_id] = it
       end
-      DOC['user_id']
+      DOC[user_id]
     end
 
     Item = Struct.new(:seq, :title, :tags)
