@@ -103,7 +103,6 @@ module Periodic
   class OAuthTofu < Tofu::Tofu
     @erb_method = []
     def to_html(context)
-      pp @session.session_id
       @session.oauth_callback(context.req.query['oauth_token'], context.req.query['oauth_verifier'])
       @session.redirect_to(context, '/')
     end
@@ -117,16 +116,19 @@ module Periodic
     @erb_method = []
 
     def to_html(context)
-      pp [context.req.content_length, context.req.body]
 
       body = JSON.parse(context.req.body)
+      result = {"status" => "ok"}
 
       case body['op']
       when 'add'
         pp @session.doc.add_item(body['title'])
         pp @session.doc
       when 'update'
-        pp @session.doc.set_title(body['id'], body['title'])
+        new_one = @session.doc.set_title(body['id'], body['title'])
+        if new_one
+          result["title"] = new_one.title
+        end
       when 'check'
         pp @session.doc.check(body['title'], body['value'])
         pp @session.doc.checked
@@ -135,12 +137,12 @@ module Periodic
       when 'order'
         pp @session.doc.set_order(body['order'])
       end
+      @session.doc.save(@session.tw_user_id)
+      
+      pp result
     
       context.res_header('content-type', 'application/json')
-      result = {"status" => "ok"}
-      body = result.to_json
-      pp [:to_html, body]
-      context.res_body(body)
+      context.res_body(result.to_json)
       context.done
     end
 
@@ -181,26 +183,10 @@ module Periodic
   class ListTofu < Tofu::Tofu
     set_erb(__dir__ + '/list.html')
 
-    def path_to_tag(context)
-      pp context.req.path_info
-
-      if /\/(\d+)/ =~ context.req.path_info
-        return $1.to_i
-      else
-        nil
-      end
-    end
-
     def list(context)
-      tag = path_to_tag(context)
-      pp [:tag, tag]
       doc = @session.doc
       return [] unless doc
-      if tag
-        return doc.item.find_all {|x| pp x.tags; x.tags.include?(tag)}.map {|x| [x, doc.checked.include?(x.title)]}
-      else
-        return doc.item.map {|x| [x, doc.checked.include?(x.title)]}
-      end
+      doc.item.map {|x| [x, doc.checked.include?(x.title)]}
     end
   end
 
@@ -212,7 +198,6 @@ module Periodic
     end
 
     def do_login(context, params)
-      pp :do_login
       @session.oauth_start(context)
     end
   end
@@ -222,8 +207,6 @@ module Periodic
 
     def list(context)
       doc = @session.doc
-      pp doc
-
       return [] unless doc
       doc.item
     end

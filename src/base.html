@@ -128,6 +128,9 @@ function update_text(e) {
       console.log('will remove');
       e.parentElement.parentElement.remove();
     }
+    if (data.title) {
+      e.value = data.title;
+    }
   })
   .catch((error) => {
     console.log('Error:', error);

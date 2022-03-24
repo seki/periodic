@@ -1,8 +1,10 @@
 require 'json'
 require 'monitor'
 require 'set'
+require_relative 'bucket'
 
 module Periodic
+  Store = Bucket.new
 
   class Doc
     include MonitorMixin
@@ -16,19 +18,9 @@ module Periodic
       self.new(hash)
     end
 
-    DOC = {}
     def self.load(user_id)
-      unless DOC[user_id]
-        pp :doc_load
-        it = self.new
-        it.add_item("金のなる木を植える")
-        it.add_item("住人からレシピ")
-        it.add_item("海岸でレシピ")
-        it.add_item("金のなる木を植える")
-        it.add_item("金のなる木を植える")
-        DOC[user_id] = it
-      end
-      DOC[user_id]
+      last = JSON.parse(Store.get_object("#{user_id}.json")) rescue {}
+      self.new(last)
     end
 
     Item = Struct.new(:seq, :title, :tags)
@@ -54,13 +46,24 @@ module Periodic
       end
     end
 
-    def initialize(hash=nil)
+    def initialize(hash={})
       super()
-      @item_seq = 0
-      @item = []
-      @checked = {}
+      @item = (hash["item"] || []).map {|ary| Item.new(*ary)}
+      @checked = hash["checked"] || {}
+      @item_seq = (@item.max_by {|x| x.seq}&.seq) || 0
     end
     attr_reader :item, :checked
+
+    def save(user_id)
+      Store.put_object("#{user_id}.json", to_h.to_json)
+    end
+
+    def to_h
+      {
+        "item" => @item.map {|it| it.to_a},
+        "checked" => @checked
+      }
+    end
 
     def add_item(title)
       synchronize do
@@ -93,11 +96,9 @@ module Periodic
 
     def set_order(ary)
       *order, _ = ary
-      pp order
       synchronize do
         items = order.map {|id_str| by_id(id_str)}.compact
         if items.size == @item.size
-          pp :order
           @item = items
         end
       end
@@ -110,10 +111,11 @@ module Periodic
         return nil if title == it.title
         if title.empty?
           @item.delete(it)
+          return nil
         else
           it.title = make_uniq_title(title)
         end
-        it
+        return it
       end
     end
 
