@@ -4,8 +4,6 @@ require 'pathname'
 require 'pp'
 require_relative 'my-oauth'
 require_relative 'doc'
-
-require 'rinda/tuplespace'
 require 'json'
 
 module Tofu
@@ -19,8 +17,6 @@ module Tofu
 end
 
 module Periodic
-  WaitingOAuth = Rinda::TupleSpace.new
-
   class Session < Tofu::Session
     def initialize(bartender, hint='')
       super
@@ -70,7 +66,6 @@ module Periodic
       pp [:do_login, session_id, url]
       consumer = Periodic::Twitter::consumer
       request_token = consumer.get_request_token(:oauth_callback => url.to_s)
-      WaitingOAuth.write([request_token.token, request_token.secret, session_id], 5)
       redirect_to(context, request_token.authorize_url)
     end
 
@@ -138,7 +133,7 @@ module Periodic
         pp @session.doc.set_order(body['order'])
       end
       @session.doc.save(@session.tw_user_id)
-      
+
       pp result
     
       context.res_header('content-type', 'application/json')

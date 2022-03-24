@@ -22,3 +22,9 @@
     </div>
   </div>
 </div>
+<script>
+const timer = <%=h ((Date.today + 1).to_time - Time.now).ceil * 1000 %>;
+window.addEventListener('load',function(){
+  setInterval('location.reload()',timer);
+});
+</script>

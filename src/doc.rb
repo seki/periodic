@@ -2,6 +2,8 @@ require 'json'
 require 'monitor'
 require 'set'
 require_relative 'bucket'
+require 'time'
+require 'date'
 
 module Periodic
   Store = Bucket.new
@@ -49,10 +51,16 @@ module Periodic
     def initialize(hash={})
       super()
       @item = (hash["item"] || []).map {|ary| Item.new(*ary)}
-      @checked = hash["checked"] || {}
+      @checked = (hash["checked"] || {}).map {|k,v| [k, Time.parse(v.to_s)]}.to_h
       @item_seq = (@item.max_by {|x| x.seq}&.seq) || 0
+      clean
     end
     attr_reader :item, :checked
+
+    def checked
+      clean if @clean_at != Date.today.to_time
+      @checked
+    end
 
     def save(user_id)
       Store.put_object("#{user_id}.json", to_h.to_json)
@@ -63,6 +71,12 @@ module Periodic
         "item" => @item.map {|it| it.to_a},
         "checked" => @checked
       }
+    end
+
+    def clean
+      today = Date.today.to_time
+      @checked.delete_if {|k, v| v < today} 
+      @clean_at = today
     end
 
     def add_item(title)
