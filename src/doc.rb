@@ -1,5 +1,6 @@
 require 'json'
 require 'monitor'
+require 'set'
 
 module Periodic
 
@@ -47,19 +48,24 @@ module Periodic
       def to_json(*)
         as_json.to_json
       end
+
+      def tag_classlist
+        self.tags.map {|n| "periodic-tag-#{n}"}.join(" ")
+      end
     end
 
     def initialize(hash=nil)
       super()
       @item_seq = 0
       @item = []
+      @checked = {}
     end
-    attr_reader :item
+    attr_reader :item, :checked
 
     def add_item(title)
       synchronize do
         @item_seq += 1
-        it = Item.new(@item_seq, make_uniq_title(title), 0)
+        it = Item.new(@item_seq, make_uniq_title(title), [])
         @item << it
         return it
       end
@@ -77,21 +83,45 @@ module Periodic
       end
     end
 
+    def check(title, bool)
+      if bool
+        @checked[title] = Time.now
+      else
+        @checked.delete(title)
+      end
+    end
+
+    def set_order(ary)
+      *order, _ = ary
+      pp order
+      synchronize do
+        items = order.map {|id_str| by_id(id_str)}.compact
+        if items.size == @item.size
+          pp :order
+          @item = items
+        end
+      end
+    end
+
     def set_title(id_str, title)
       synchronize do
-        it = by_seq(seq)
+        it = by_id(id_str)
         return nil unless it
         return nil if title == it.title
-        it.title = make_uniq_title(title)
+        if title.empty?
+          @item.delete(it)
+        else
+          it.title = make_uniq_title(title)
+        end
         it
       end
     end
 
     def set_tags(id_str, tags)
       synchronize do
-        it = by_seq(seq)
+        it = by_id(id_str)
         return nil unless it
-        it.tags = tags
+        it.tags = tags.map {|x| x.to_i}
         it
       end
     end

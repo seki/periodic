@@ -17,6 +17,9 @@
 .form-switch .form-check-input:focus {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='pink'/%3e%3c/svg%3e");
 }
+.form-control::placeholder{
+  color: #ffbbbb;
+}
 
 </style>
 </head>
@@ -43,7 +46,9 @@
 
 <div class="container">
 <% path = context.req.path_info %>
-<% if path == '/edit/' %>
+<% if @session.tw_user_id.nil? %>
+  <%= @login.to_html(context) %>
+<% elsif path == '/edit/' %>
   <%= @edit.to_html(context) %>
 <% else %>
   <%= @list.to_html(context) %>
@@ -54,30 +59,31 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.js" integrity="sha512-Fc8SDJVBwajCGX0A9z8lBeRPaCjR25Ek577z9PtQLB7CLBz7Mw1XhjbcD2yDWrGszL/uezKGidtGCng6Fhz3+A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 const sortElement = document.getElementById('sort-table');
-var sortable = Sortable.create(sortElement, {
-  handle: '.handle',
-  filter: '.sort-ignore',
-  onChange: function(/**Event*/evt) {
-		console.log(this.toArray());
-    fetch('/app/api/', {
-      method: 'POST', // or 'PUT'
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(this.toArray()),
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Success:', data);
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-	}
-});
+if (sortElement) {
+  var sortable = Sortable.create(sortElement, {
+    handle: '.handle',
+    filter: '.sort-ignore',
+    onChange: function(/**Event*/evt) {
+      console.log(this.toArray());
+      fetch('/app/api/', {
+        method: 'POST', // or 'PUT'
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ op: 'order', order: this.toArray()})
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+      })
+      .catch((error) => {
+        console.log('Error:', error);
+      });
+    }
+  });
+}
 
 function add_text(e) {
-  console.log(e.value);
   data = {
     op: 'add',
     title: e.value
@@ -97,9 +103,99 @@ function add_text(e) {
     window.location.reload(true);
   })
   .catch((error) => {
-    console.error('Error:', error);
+    console.log('Error:', error);
   });
 }
+
+function update_text(e) {
+  data = {
+    op: 'update',
+    id: e.dataset.id,
+    title: e.value
+  }
+
+  fetch('/app/api/', {
+    method: 'POST', // or 'PUT'
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Success:', data);
+    if (e.value == '') {
+      console.log('will remove');
+      e.parentElement.parentElement.remove();
+    }
+  })
+  .catch((error) => {
+    console.log('Error:', error);
+  });
+}
+
+
+function check_item(e) {
+  data = {
+    op: 'check',
+    title: e.dataset.title,
+    value: e.checked
+  }
+  console.log(e);
+
+  fetch('/app/api/', {
+    method: 'POST', // or 'PUT'
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Success:', data);
+  })
+  .catch((error) => {
+    console.log('Error:', error);
+  });
+}
+
+function check_tags(e) {
+  const tags = Array.from(e.parentElement.querySelectorAll(".periodic-check:checked")).map(e=> e.dataset.tag);
+
+  data = {
+    op: 'tags',
+    id: e.dataset.id,
+    tags: tags
+  }
+  console.log(e);
+
+  fetch('/app/api/', {
+    method: 'POST', // or 'PUT'
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Success:', data);
+  })
+  .catch((error) => {
+    console.log('Error:', error);
+  });
+}
+
+function set_tag(e) {
+  const tag = e.parentElement.querySelector(".periodic-tag:checked").dataset.tag;
+  console.log(tag);
+  data = {
+    op: 'tag',
+    tags: tag
+  }
+  console.log(e);
+  window.location.href = "/app/" + tag;
+}
+
 </script>
 </body>
 </html>

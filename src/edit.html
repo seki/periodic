@@ -6,13 +6,13 @@
     <div class="container list-group-item list-group-item-action" data-id="<%= it.id_str %>">
 
       <div class="input-group mb-2">
-        <input id="text-<%= it.id_str %>" class="periodic-text form-control" placeholder="will remove" type="text" value="<%=h it.title %>" onchange="update_text(this)">
+        <input data-id="<%= it.id_str %>" id="text-<%= it.id_str %>" class="periodic-text form-control" placeholder="will remove" type="text" value="<%=h it.title %>" onchange="update_text(this)">
       </div>
 
       <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
-        <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+        <div class="btn-group periodic-form" role="group" aria-label="Basic checkbox toggle button group">
           <% @session.tags.to_a.each_with_index do |icon, n| %>
-          <input type="checkbox" class="btn-check" id="btncheck<%= n %>-<%= it.id_str %>" autocomplete="off">
+          <input type="checkbox" <% if it.tags.include?(n) %>checked<% end %> class="btn-check periodic-check" id="btncheck<%= n %>-<%= it.id_str %>" autocomplete="off" data-id="<%= it.id_str %>" data-tag="<%= n %>" onchange="check_tags(this)">
           <label class="btn btn-sm btn-outline-danger" for="btncheck<%= n %>-<%= it.id_str %>"><%= icon %></label>
           <% end %>
         </div>
@@ -24,7 +24,7 @@
     </div>
     <% end %>
   </div>
-
+<hr>
   <div class="list-group list-group-flush">
     <div class="container list-group-item list-group-item-action sort-ignore">
       <div class="input-group mb-2">

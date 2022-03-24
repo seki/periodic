@@ -115,6 +115,7 @@ module Periodic
 
   class APITofu < Tofu::Tofu
     @erb_method = []
+
     def to_html(context)
       pp [context.req.content_length, context.req.body]
 
@@ -124,6 +125,15 @@ module Periodic
       when 'add'
         pp @session.doc.add_item(body['title'])
         pp @session.doc
+      when 'update'
+        pp @session.doc.set_title(body['id'], body['title'])
+      when 'check'
+        pp @session.doc.check(body['title'], body['value'])
+        pp @session.doc.checked
+      when 'tags'
+        pp @session.doc.set_tags(body['id'], body['tags'])
+      when 'order'
+        pp @session.doc.set_order(body['order'])
       end
     
       context.res_header('content-type', 'application/json')
@@ -146,6 +156,7 @@ module Periodic
       super(session)
       @list = ListTofu.new(session)
       @edit = EditTofu.new(session)
+      @login = LoginTofu.new(session)
     end
 
     def tofu_id
@@ -170,11 +181,39 @@ module Periodic
   class ListTofu < Tofu::Tofu
     set_erb(__dir__ + '/list.html')
 
+    def path_to_tag(context)
+      pp context.req.path_info
+
+      if /\/(\d+)/ =~ context.req.path_info
+        return $1.to_i
+      else
+        nil
+      end
+    end
+
     def list(context)
+      tag = path_to_tag(context)
+      pp [:tag, tag]
       doc = @session.doc
-      pp doc
       return [] unless doc
-      doc.item
+      if tag
+        return doc.item.find_all {|x| pp x.tags; x.tags.include?(tag)}.map {|x| [x, doc.checked.include?(x.title)]}
+      else
+        return doc.item.map {|x| [x, doc.checked.include?(x.title)]}
+      end
+    end
+  end
+
+  class LoginTofu < Tofu::Tofu
+    set_erb(__dir__ + '/login.html')
+
+    def tofu_id
+      'login'
+    end
+
+    def do_login(context, params)
+      pp :do_login
+      @session.oauth_start(context)
     end
   end
 
