@@ -20,9 +20,16 @@ module Periodic
       self.new(hash)
     end
 
+    DOC = Hash.new
+    DOC.extend(MonitorMixin)
     def self.load(user_id)
-      last = JSON.parse(Store.get_object("#{user_id}.json")) rescue {}
-      self.new(last)
+      DOC.synchronize do
+        unless DOC[user_id]
+          last = JSON.parse(Store.get_object("#{user_id}.json")) rescue {}
+          DOC[user_id] = self.new(last)
+        end
+        DOC[user_id]
+      end
     end
 
     Item = Struct.new(:seq, :title, :tags)
