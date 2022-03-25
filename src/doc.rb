@@ -118,7 +118,7 @@ module Periodic
     def set_order(order)
       pp [order.size, @item.size]
       synchronize do
-        items = order.map {|id_str| by_id(id_str)}.compact
+        items = order.uniq.map {|id_str| by_id(id_str)}.compact
         if items.size == @item.size
           @item = items
         end
