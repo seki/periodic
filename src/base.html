@@ -188,13 +188,32 @@ function check_tags(e) {
   });
 }
 
+function show_item_with_tag(tag) {
+  Array.from(document.querySelectorAll(".periodic-item:not(.periodic-tag-" + tag + ")")).map(x=>x.classList.add('d-none'));
+  Array.from(document.querySelectorAll(".periodic-item.periodic-tag-" + tag)).map(x=>x.classList.remove('d-none'));
+}
+
 function set_tag(e) {
-  const tag = e.parentElement.querySelector(".periodic-tag:checked").dataset.tag;
+  const tag = document.querySelector(".periodic-tag:checked").dataset.tag;
   if (tag) {
-    Array.from(document.querySelectorAll(".periodic-item:not(.periodic-tag-" + tag + ")")).map(x=>x.classList.add('d-none'));
-    Array.from(document.querySelectorAll(".periodic-item.periodic-tag-" + tag)).map(x=>x.classList.remove('d-none'));
+    //show_item_with_tag(tag);
+    window.location.hash = ("#" + tag);
   }
 }
+
+var hash_tag = window.location.hash.substr(1);
+if (["0", "1", "2", "3", "4", "5"].includes(hash_tag)) {
+  document.querySelector("input#btncheck" + hash_tag).checked = true;
+  show_item_with_tag(hash_tag);
+}
+
+window.addEventListener('hashchange', function() {
+  var hash_tag = window.location.hash.substr(1);
+  if (["0", "1", "2", "3", "4", "5"].includes(hash_tag)) {
+  document.querySelector("input#btncheck" + hash_tag).checked = true;
+  show_item_with_tag(hash_tag);
+}
+}, false);
 
 </script>
 </body>
