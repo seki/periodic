@@ -8,14 +8,14 @@
     </div>
   </div>
   <div class="row">
-    <div class="list-group list-group-flush" id="stock">
+    <div class="list-group list-group-flush" id="sort-table">
       <% list(context).each do |it, checked| %>
       <div class="d-flex w-100 justify-content-between list-group-item list-group-item-action <%= it.tag_classlist%> periodic-item" data-id="<%= it.id_str %>">
         <div>
           <span><%=h it.title %></span>
         </div>
         <div class="form-check form-switch">
-          <input <% if checked %>checked<% end %> class="form-check-input" type="checkbox" id="list-tr-<%=h it.id_str %>" data-title="<%=h it.title %>" onchange="check_item(this)">
+          <input <% if checked %>checked<% end %> class="form-check-input handle" type="checkbox" id="list-tr-<%=h it.id_str %>" data-title="<%=h it.title %>" onchange="check_item(this)">
         </div>    
       </div>
       <% end %>

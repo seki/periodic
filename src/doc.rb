@@ -90,7 +90,7 @@ module Periodic
       synchronize do
         @item_seq += 1
         it = Item.new(@item_seq, make_uniq_title(title), [])
-        @item << it
+        @item.unshift(it)
         return it
       end
     end
@@ -115,8 +115,8 @@ module Periodic
       end
     end
 
-    def set_order(ary)
-      *order, _ = ary
+    def set_order(order)
+      pp [order.size, @item.size]
       synchronize do
         items = order.map {|id_str| by_id(id_str)}.compact
         if items.size == @item.size

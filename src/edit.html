@@ -1,5 +1,18 @@
 <div class="container">
+  <div class="list-group list-group-flush">
+    <div class="container list-group-item list-group-item-action sort-ignore">
+      <div class="input-group mb-2">
+        <input id="text-add" class="periodic-text form-control" placeholder="create a TODO" type="text" value="" onchange="add_text(this)">
+      </div>
+      <div class="btn-toolbar justify-content-end" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="input-group">
+          <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-plus-lg"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <hr>
 
   <div class="list-group list-group-flush" id="sort-table">
     <% list(context).each do |it| %>
@@ -24,17 +37,5 @@
     </div>
     <% end %>
   </div>
-<hr>
-  <div class="list-group list-group-flush">
-    <div class="container list-group-item list-group-item-action sort-ignore">
-      <div class="input-group mb-2">
-        <input id="text-add" class="periodic-text form-control" placeholder="create a TODO" type="text" value="" onchange="add_text(this)">
-      </div>
-      <div class="btn-toolbar justify-content-end" role="toolbar" aria-label="Toolbar with button groups">
-        <div class="input-group">
-          <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-plus-lg"></i></button>
-        </div>
-      </div>
-    </div>
-  </div>
+
 </div>
