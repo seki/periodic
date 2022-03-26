@@ -113,6 +113,10 @@ function update_text(e) {
   })
   .then(response => response.json())
   .then(data => {
+    if (data.status == 'login') {
+      console.log('login please')
+    }
+
     console.log('Success:', data);
     if (e.value == '') {
       console.log('will remove');
@@ -146,6 +150,10 @@ function check_item(e) {
   .then(response => response.json())
   .then(data => {
     console.log('Success:', data);
+    if (data.status == 'login') {
+      console.log('login please')
+      window.location.href = "/app?error";
+    }
   })
   .catch((error) => {
     console.log('Error:', error);

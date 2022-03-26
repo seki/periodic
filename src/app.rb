@@ -112,29 +112,31 @@ module Periodic
 
     def to_html(context)
 
-      body = JSON.parse(context.req.body)
       result = {"status" => "ok"}
 
-      case body['op']
-      when 'add'
-        pp @session.doc.add_item(body['title'])
-        pp @session.doc
-      when 'update'
-        new_one = @session.doc.set_title(body['id'], body['title'])
-        if new_one
-          result["title"] = new_one.title
+      if @session.doc
+        body = JSON.parse(context.req.body)
+        case body['op']
+        when 'add'
+          pp @session.doc.add_item(body['title'])
+          pp @session.doc
+        when 'update'
+          new_one = @session.doc.set_title(body['id'], body['title'])
+          if new_one
+            result["title"] = new_one.title
+          end
+        when 'check'
+          pp @session.doc.check(body['title'], body['value'])
+          pp @session.doc.checked
+        when 'tags'
+          pp @session.doc.set_tags(body['id'], body['tags'])
+        when 'order'
+          pp @session.doc.set_order(body['order'])
         end
-      when 'check'
-        pp @session.doc.check(body['title'], body['value'])
-        pp @session.doc.checked
-      when 'tags'
-        pp @session.doc.set_tags(body['id'], body['tags'])
-      when 'order'
-        pp @session.doc.set_order(body['order'])
+        @session.doc.save(@session.tw_user_id)
+      else
+        result = {"status" => "login"}
       end
-      @session.doc.save(@session.tw_user_id)
-
-      pp result
     
       context.res_header('content-type', 'application/json')
       context.res_body(result.to_json)
