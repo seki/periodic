@@ -64,6 +64,9 @@ if (sortElement) {
       })
       .then(response => response.json())
       .then(data => {
+        if (data['data']) {
+          localStorage.setItem("periodical", data['data'])
+        }
         console.log('Success:', data);
       })
       .catch((error) => {
@@ -88,6 +91,9 @@ function add_text(e) {
   })
   .then(response => response.json())
   .then(data => {
+    if (data['data']) {
+      localStorage.setItem("periodical", data['data'])
+    }
     console.log('Success:', data);
     window.location.href = "/app/edit/#text-add";
     window.location.reload(true);
@@ -113,8 +119,8 @@ function update_text(e) {
   })
   .then(response => response.json())
   .then(data => {
-    if (data.status == 'login') {
-      console.log('login please')
+    if (data['data']) {
+      localStorage.setItem("periodical", data['data'])
     }
 
     console.log('Success:', data);
@@ -130,7 +136,6 @@ function update_text(e) {
     console.log('Error:', error);
   });
 }
-
 
 function check_item(e) {
   data = {
@@ -150,6 +155,9 @@ function check_item(e) {
   .then(response => response.json())
   .then(data => {
     console.log('Success:', data);
+    if (data['data']) {
+      localStorage.setItem("periodical", data['data'])
+    }
     if (data.status == 'login') {
       console.log('login please')
       window.location.href = "/app?error";
@@ -180,6 +188,9 @@ function check_tags(e) {
   .then(response => response.json())
   .then(data => {
     console.log('Success:', data);
+    if (data['data']) {
+      localStorage.setItem("periodical", data['data'])
+    }
   })
   .catch((error) => {
     console.log('Error:', error);
@@ -197,6 +208,29 @@ function set_tag(e) {
     //show_item_with_tag(tag);
     window.location.hash = ("#" + tag);
   }
+}
+
+function login_local() {
+  data = {
+    op: 'login_local',
+    data: localStorage.getItem("periodical")
+  }
+
+  fetch('/app/api/', {
+    method: 'POST', // or 'PUT'
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Success:', data);
+    window.location.reload(true);
+  })
+  .catch((error) => {
+    console.log('Error:', error);
+  });
 }
 
 var hash_tag = window.location.hash.substr(1);

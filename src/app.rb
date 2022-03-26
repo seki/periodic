@@ -25,12 +25,6 @@ module Periodic
       @tw_user_id = nil
       @doc = nil
 
-      if ENV['PERIODIC_DEBUG']
-        @tw_user_id = '5797712'
-        @tw_screen_name = '@m_seki'
-        @doc = Periodic::Doc.load(@tw_user_id)
-      end
-
       @base = BaseTofu.new(self)
       @oauth = OAuthTofu.new(self)
       @api = APITofu.new(self)
@@ -80,9 +74,21 @@ module Periodic
       @tw_secret = access_token.secret
       @tw_token = access_token.token
 
+      @hint = @tw_user_id
+
       @doc = Periodic::Doc.load(@tw_user_id)
     rescue
       pp $!
+    end
+
+    def login_local(data)
+      hash = JSON.parse(data) rescue {}
+      @doc = Periodic::Doc.new(hash)
+      @hint = @tw_user_id = 'local'
+    end
+
+    def local?
+      @tw_user_id == 'local'
     end
   end
 
@@ -113,9 +119,11 @@ module Periodic
     def to_html(context)
 
       result = {"status" => "ok"}
-
-      if @session.doc
-        body = JSON.parse(context.req.body)
+      body = JSON.parse(context.req.body)
+      
+      if body['op'] == 'login_local'
+        @session.login_local(body['data'])
+      elsif @session.doc
         case body['op']
         when 'add'
           pp @session.doc.add_item(body['title'])
@@ -133,7 +141,11 @@ module Periodic
         when 'order'
           pp @session.doc.set_order(body['order'])
         end
-        @session.doc.save(@session.tw_user_id)
+        if @session.local?
+          result['data'] = @session.doc.to_h.to_json
+        else
+          @session.doc.save(@session.tw_user_id)
+        end
       else
         result = {"status" => "login"}
       end
@@ -172,9 +184,6 @@ module Periodic
       @session.oauth_start(context)
     end
 
-    def do_logout(context, params)
-      @session
-    end
   end
 
   class ListTofu < Tofu::Tofu
@@ -196,6 +205,10 @@ module Periodic
 
     def do_login(context, params)
       @session.oauth_start(context)
+    end
+
+    def do_login_local(context, params)
+      
     end
   end
 
