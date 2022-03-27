@@ -55,6 +55,12 @@ module Periodic
       end
     end
 
+    def logout
+      @tw_screen_name = nil
+      @tw_user_id = nil
+      @doc = nil
+    end
+
     def oauth_start(context)
       url = ENV['TW_CALLBACK'] || context.req.request_uri + '/app/auth/twitter/callback'
       pp [:do_login, session_id, url]
@@ -185,6 +191,10 @@ module Periodic
       @session.oauth_start(context)
     end
 
+    def do_logout(context, params)
+      @session.logout
+      @session.redirect_to(context, '/app/')
+    end
   end
 
   class ListTofu < Tofu::Tofu
