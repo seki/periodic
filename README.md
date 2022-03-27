@@ -2,7 +2,7 @@
 
 This is a reminder to manage your daily tasks.
 
-## sample
+## demo
 
 [https://periodic.druby.work/app/](https://periodic.druby.work/app/ "Periodic")
 
