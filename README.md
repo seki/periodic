@@ -2,6 +2,13 @@
 
 This is a reminder to manage your daily tasks.
 
+あつ森でタスク忘れることがあったので、自分用にリマインダーを作りました。
+デイリー専用なので、毎日0時にチェックが初期化されます。
+
+今回はHerokuじゃなくて、OCIを利用しました。
+なので、データベースは使わず普通のファイルにデータを保存しています。
+ああ、潔くて気持ちいい。
+
 ## demo
 
 [https://periodic.druby.work/app/](https://periodic.druby.work/app/ "Periodic")
