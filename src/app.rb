@@ -128,7 +128,7 @@ module Periodic
       body = JSON.parse(context.req.body)
       
       if body['op'] == 'login_local'
-        data = body['data'] || %q({"item":[[1,"Create TODO",[]],[2,"Set tags",[]]],"checked":{}})
+        data = body['data'] || Doc.sample_data
         @session.login_local(data)
       elsif @session.doc
         case body['op']

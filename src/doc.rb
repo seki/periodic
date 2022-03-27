@@ -32,6 +32,12 @@ module Periodic
       end
     end
 
+    def self.sample_data
+      DOC.synchronize do
+        Store.get_object('5797712.json')
+      end
+    end
+
     Item = Struct.new(:seq, :title, :tags)
     class Item
       def id_str
