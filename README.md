@@ -2,6 +2,10 @@
 
 This is a reminder to manage your daily tasks.
 
+## sample
+
+[https://periodic.druby.work/app/](https://periodic.druby.work/app/ "Periodic")
+
 ## for users
 
 上部のアイコンはタグによるフィルタだよ。
