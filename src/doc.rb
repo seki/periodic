@@ -86,8 +86,17 @@ module Periodic
       }
     end
 
+    def period(now = Time.now)
+      offset = (5 - 9) % 24 # 5:00 +9 に切り替えたい
+      d, h = now.to_i.divmod(24 * 3600)
+      if h < offset * 3600
+        d -= 1
+      end
+      Time.at((d * 24 + offset) * 3600)
+    end
+
     def clean
-      today = Date.today.to_time
+      today = period
       @checked.delete_if {|k, v| v < today} 
       @clean_at = today
     end
