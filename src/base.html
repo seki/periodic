@@ -147,6 +147,11 @@ function update_text(e) {
   });
 }
 
+function update_check_with_local() {
+  let checked = JSON.parse(localStorage.getItem('periodical'))["checked"];
+  document.querySelectorAll('input[data-title]').forEach(that => {that.checked =  checked[that.dataset.title] ? true : false})
+}
+
 function check_item(e) {
   data = {
     op: 'check',
@@ -166,7 +171,8 @@ function check_item(e) {
   .then(data => {
     console.log('Success:', data);
     if (data['data']) {
-      localStorage.setItem("periodical", data['data'])
+      localStorage.setItem("periodical", data['data']);
+      update_check_with_local();
     }
     if (data.status == 'login') {
       console.log('login please')
