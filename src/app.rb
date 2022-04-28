@@ -151,6 +151,7 @@ module Periodic
         if @session.local?
           result['data'] = @session.doc.to_h.to_json
         else
+          result['data'] = @session.doc.to_h.to_json # FIXME
           @session.doc.save(@session.tw_user_id)
         end
       else
